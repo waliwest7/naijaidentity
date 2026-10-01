@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NaijaID 🇳🇬 — What Kind of Nigerian Are You?</title>
+  <meta name="description" content="Take the 60-second NaijaID personality quiz and discover your true Nigerian identity. Share your custom result card with your friends!">
+  
+  <!-- Open Graph / Meta -->
+  <meta property="og:title" content="NaijaID 🇳🇬 — What Kind of Nigerian Are You?">
+  <meta property="og:description" content="Discover your Naija Identity in 8 fun, relatable questions. No sign-up required!">
+  <meta property="og:type" content="website">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Paystack Inline SDK -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+
+  <!-- Tailwind Theme Configuration -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            naija: {
+              green: '#008751',
+              neon: '#00e676',
+              dark: '#0b0f0d',
+              card: '#121a15',
+              border: '#1f2d25',
+              gold: '#eab308'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          },
+          animation: {
+            'float': 'float 4s ease-in-out infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'shimmer': 'shimmer 2s linear infinite',
+            'spin-slow': 'spin 8s linear infinite'
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' }
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    body {
+      background-color: #0b0f0d;
+      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+
+    .glass-card {
+      background: rgba(18, 26, 21, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(31, 45, 37, 0.8);
+    }
+
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glow-green {
+      box-shadow: 0 0 25px rgba(0, 230, 118, 0.25);
+    }
+
+    .glow-gold {
+      box-shadow: 0 0 25px rgba(234, 179, 8, 0.3);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f0d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2d25;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-naija-neon selection:text-black">
+
+  <!-- Header Bar -->
+  <header class="sticky top-0 z-40 w-full glass-card border-b border-naija-border px-4 py-3">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <a href="#" onclick="app.showScreen('landing'); return false;" class="flex items-center gap-2 font-black text-xl tracking-tight text-white group">
+        <span class="text-2xl group-hover:scale-110 transition-transform">🇳🇬</span>
+        <span>Naija<span class="text-naija-neon">ID</span></span>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <!-- Audio Toggle Button -->
+        <button id="soundToggleBtn" onclick="app.toggleSound()" class="p-2 rounded-full bg-naija-card border border-naija-border text-gray-400 hover:text-white hover:border-naija-neon transition" title="Toggle Sound FX">
+          <svg id="soundIconOn" class="w-5 h-5 text-naija-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+          <svg id="soundIconOff" class="w-5 h-5 hidden text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 w-full max-w-xs space-y-2 pointer-events-none px-4"></div>
+
+  <!-- Main Viewport -->
+  <main class="flex-grow max-w-md w-full mx-auto px-4 py-6 flex flex-col justify-center">
+
+    <!-- SCREEN 1: LANDING HERO PAGE -->
+    <section id="screen-landing" class="space-y-6 text-center transition-all duration-300">
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-pill border border-naija-neon/30 text-xs font-semibold text-naija-neon">
+        <span class="w-2 h-2 rounded-full bg-naija-neon animate-pulse"></span>
+        <span id="countdownText">INDEPENDENCE DAY CHALLENGE 🇳🇬</span>
+      </div>
+
+      <div class="space-y-3">
+        <h1 class="text-4xl sm:text-5xl font-black tracking-tight leading-tight uppercase text-white">
+          WHAT KIND OF NIGERIAN ARE YOU? <span class="inline-block animate-bounce">🇳🇬</span>
+        </h1>
+        <p class="text-gray-300 text-sm sm:text-base font-medium">
+          Answer 8 hilarious, relatable questions and discover your official <span class="text-naija-neon font-bold">Naija Identity</span>.
+        </p>
+        <p class="text-xs text-gray-500 italic">
+          No sign-up required • Pure vibes 😂
+        </p>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="app.startQuiz()" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-naija-green to-emerald-500 hover:from-emerald-500 hover:to-naija-neon text-white font-black text-lg tracking-wide uppercase shadow-lg glow-green hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group">
+          <span>DISCOVER MY NAIJA ID</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </button>
+        <p class="text-[11px] text-gray-400 mt-2">⏱️ Takes only 60 seconds</p>
+      </div>
+
+      <!-- Friend Challenge Alert Banner -->
+      <div id="friendChallengeCard" class="hidden p-3 rounded-xl bg-naija-card border border-naija-gold/40 text-left text-xs space-y-1">
+        <p class="font-bold text-naija-gold flex items-center gap-1">
+          <span>🎯</span> Friend Challenge!
+        </p>
+        <p id="friendChallengeText" class="text-gray-300">Your friend just completed the quiz!</p>
+      </div>
+
+      <!-- Personality Archetype Showcase -->
+      <div class="pt-4 space-y-3">
+        <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Your Identity Could Be...</p>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div class="p-3 rounded-xl glass-card border border-naija-border/80 text-left animate-float">
+            <div class="text-2xl mb-1">💼</div>
+            <div class="font-bold text-xs text-white uppercase">The Hustler</div>
+            <div class="text-[10px] text-gray-400">Turns ₦5k into a masterplan</div>
+          </div>
+          <div class="p-3 rounded-xl glass-card border border-naija-border/80 text-left animate-float" style="animation-delay: 0.5s;">
+            <div class="text-2xl mb-1">😎</div>
+            <div class="font-bold text-xs text-white uppercase">Vibes Merchant</div>
+            <div class="text-[10px] text-gray-400">Life is too short to overthink</div>
+          </div>
+          <div class="p-3 rounded-xl glass-card border border-naija-border/80 text-left animate-float" style="animation-delay: 1s;">
+            <div class="text-2xl mb-1">🧠</div>
+            <div class="font-bold text-xs text-white uppercase">The Strategist</div>
+            <div class="text-[10px] text-gray-400">Doesn't panic, calculates</div>
+          </div>
+          <div class="p-3 rounded-xl glass-card border border-naija-border/80 text-left animate-float" style="animation-delay: 1.5s;">
+            <div class="text-2xl mb-1">🥂</div>
+            <div class="font-bold text-xs text-white uppercase">Soft Life Specialist</div>
+            <div class="text-[10px] text-gray-400">Stress? In this economy?</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real Social Proof Counter -->
+      <div class="pt-4 border-t border-naija-border/50 text-center space-y-2">
+        <p class="text-[11px] font-bold tracking-widest text-gray-400 uppercase">JOIN THOUSANDS DISCOVERING THEIR NAIJA ID 👀</p>
+        <div class="flex items-center justify-center gap-2 text-xs text-gray-400">
+          <span class="flex -space-x-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-700 flex items-center justify-center text-[10px]">🇳🇬</span>
+            <span class="w-6 h-6 rounded-full bg-yellow-700 flex items-center justify-center text-[10px]">🔥</span>
+            <span class="w-6 h-6 rounded-full bg-teal-700 flex items-center justify-center text-[10px]">💼</span>
+          </span>
+          <span id="quizStartsCounter" class="font-semibold text-white">Calculating...</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SCREEN 2: QUIZ QUESTION VIEW -->
+    <section id="screen-quiz" class="hidden space-y-6 transition-all duration-300">
+      
+      <div class="space-y-2">
+        <div class="flex justify-between items-center text-xs font-bold text-gray-400">
+          <span id="questionProgressText" class="text-naija-neon uppercase">QUESTION 1 OF 8</span>
+          <span id="questionCategory" class="text-gray-500">Naija Survival</span>
+        </div>
+        <div class="w-full h-2 bg-naija-card rounded-full overflow-hidden border border-naija-border">
+          <div id="progressBar" class="h-full bg-gradient-to-r from-naija-green to-naija-neon transition-all duration-300 w-1/8"></div>
+        </div>
+      </div>
+
+      <div class="p-5 rounded-2xl glass-card border border-naija-border space-y-2">
+        <span class="text-2xl" id="questionIcon">🔋</span>
+        <h2 id="questionText" class="text-lg sm:text-xl font-bold text-white leading-snug">
+          Loading question...
+        </h2>
+      </div>
+
+      <div id="answersContainer" class="space-y-3">
+        <!-- Injected dynamically -->
+      </div>
+
+    </section>
+
+    <!-- SCREEN 3: CALCULATING / LOADING ANIMATION -->
+    <section id="screen-calculating" class="hidden py-16 text-center space-y-6 transition-all duration-300">
+      <div class="relative w-24 h-24 mx-auto flex items-center justify-center">
+        <div class="absolute inset-0 rounded-full border-4 border-naija-border border-t-naija-neon animate-spin"></div>
+        <span class="text-4xl animate-bounce">🇳🇬</span>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-xl font-black uppercase text-white tracking-wide">CALCULATING YOUR NAIJA ID...</h3>
+        <p id="calcStatusText" class="text-xs text-naija-neon font-mono animate-pulse">Analyzing Street Smarts...</p>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: RESULT DISPLAY PAGE -->
+    <section id="screen-result" class="hidden space-y-6 transition-all duration-300">
+      
+      <div class="text-center space-y-1">
+        <div class="flex items-center justify-center gap-2">
+          <p class="text-xs font-bold uppercase tracking-widest text-naija-neon">YOUR OFFICIAL NAIJA IDENTITY IS</p>
+          <!-- Animated Badge for Premium Users -->
+          <div id="premiumAnimatedBadge" class="hidden relative flex items-center justify-center">
+            <span class="absolute inline-flex h-full w-full rounded-full bg-naija-gold opacity-75 animate-ping"></span>
+            <span class="relative inline-flex rounded-full h-5 w-5 bg-naija-gold text-[10px] text-black font-black items-center justify-center shadow">★</span>
+          </div>
+        </div>
+        <h2 id="resultTitle" class="text-3xl sm:text-4xl font-black uppercase text-white tracking-tight">THE HUSTLER 💼</h2>
+      </div>
+
+      <!-- Main Result Canvas Preview Card -->
+      <div class="relative rounded-2xl overflow-hidden glass-card border-2 border-naija-neon/40 p-5 space-y-5 glow-green">
+        <canvas id="resultCanvas" class="w-full h-auto rounded-xl shadow-2xl block border border-naija-border/50"></canvas>
+      </div>
+
+      <!-- Dynamic Detailed Metrics -->
+      <div class="p-4 rounded-xl glass-card border border-naija-border space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Personality Breakdown</h4>
+        <div id="resultStats" class="space-y-2 text-xs">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Description Quote -->
+      <div class="p-4 rounded-xl bg-naija-card border border-naija-border/60 text-sm text-gray-300 space-y-2 leading-relaxed italic">
+        <p id="resultDescription">"You don't wait for opportunities. You look for them."</p>
+      </div>
+
+      <!-- DEEP TRAIT BREAKDOWN & ADVICE (UNLOCKED ONLY IN PREMIUM) -->
+      <div id="deepBreakdownContainer" class="hidden p-5 rounded-2xl bg-naija-card border border-naija-gold/40 space-y-3 glow-gold">
+        <div class="flex items-center gap-2 border-b border-naija-border pb-2">
+          <span class="text-lg">🧠</span>
+          <h4 class="text-xs font-black uppercase tracking-wider text-naija-gold">Deep Trait Breakdown & Strategic Advice</h4>
+        </div>
+        <div id="deepBreakdownText" class="text-xs text-gray-200 space-y-2 leading-relaxed">
+          <!-- Dynamically filled with rich advice -->
+        </div>
+      </div>
+
+      <!-- Virality Action Controls -->
+      <div class="space-y-3 pt-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-center text-gray-400">SHARE YOUR RESULT 🇳🇬</h4>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button onclick="app.shareToWhatsApp()" class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow transition active:scale-95">
+            <span>💬 Share to WhatsApp</span>
+          </button>
+          <button onclick="app.downloadResultCard()" class="w-full py-3.5 px-4 rounded-xl bg-naija-card border border-naija-border hover:border-naija-neon text-white font-bold text-sm flex items-center justify-center gap-2 shadow transition active:scale-95">
+            <span>📥 Download Image</span>
+          </button>
+        </div>
+
+        <button onclick="app.copyResultLink()" class="w-full py-3 px-4 rounded-xl glass-pill text-xs font-semibold text-gray-300 hover:text-white flex items-center justify-center gap-2 transition">
+          <span>🔗 Copy Challenge Link</span>
+        </button>
+      </div>
+
+      <!-- PREMIUM UPSELL BANNER -->
+      <div id="premiumUpsellBanner" class="mt-6 p-5 rounded-2xl bg-gradient-to-br from-yellow-950/40 via-naija-card to-black border border-naija-gold/50 space-y-4 glow-gold">
+        <div class="flex items-center justify-between">
+          <span class="px-2.5 py-1 rounded-full bg-naija-gold/20 border border-naija-gold/40 text-naija-gold text-[10px] font-black uppercase">PREMIUM PACK ✨</span>
+          <span class="text-lg font-black text-naija-gold">₦500</span>
+        </div>
+        
+        <div class="space-y-1">
+          <h3 class="font-bold text-white text-base">UNLOCK YOUR FULL NAIJA ID PACK</h3>
+          <p class="text-xs text-gray-300">Get the Ultra HD 1080p watermark-free story card, animated badge & deep breakdown.</p>
+        </div>
+
+        <ul class="text-xs text-gray-300 space-y-1.5 font-medium">
+          <li class="flex items-center gap-2">✨ Ultra HD 1080x1920 Story Export (No Watermark)</li>
+          <li class="flex items-center gap-2">🌟 Animated Gold Identity Badge</li>
+          <li class="flex items-center gap-2">📊 Deep Trait Breakdown & Custom Strategic Advice</li>
+          <li class="flex items-center gap-2">🔥 Personalized Social Captions</li>
+        </ul>
+
+        <button onclick="app.openPaymentModal()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-amber-500 hover:to-yellow-400 text-black font-black text-sm uppercase tracking-wider shadow-lg hover:scale-[1.01] active:scale-95 transition-all">
+          UNLOCK PREMIUM — ₦500
+        </button>
+      </div>
+
+      <!-- PREMIUM UNLOCKED SECTION -->
+      <div id="premiumUnlockedSection" class="hidden mt-6 p-5 rounded-2xl bg-emerald-950/30 border border-naija-neon/60 space-y-4">
+        <div class="flex items-center gap-2 text-naija-neon font-black text-sm uppercase">
+          <span>🎉</span> PREMIUM UNLOCKED!
+        </div>
+        <p class="text-xs text-gray-300">Your high-definition 1080p story asset and deep breakdown are now fully available below!</p>
+        
+        <div class="space-y-2">
+          <button onclick="app.downloadResultCard(true)" class="w-full py-3 px-4 rounded-xl bg-naija-neon text-black font-bold text-xs uppercase flex items-center justify-center gap-2">
+            <span>📥 Download Ultra HD 1080p Story Card</span>
+          </button>
+          <button onclick="app.copyPremiumCaption()" class="w-full py-3 px-4 rounded-xl bg-naija-card border border-naija-border text-white font-bold text-xs flex items-center justify-center gap-2">
+            <span>📋 Copy Custom Social Caption</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Restart Action -->
+      <div class="text-center pt-4">
+        <button onclick="app.startQuiz()" class="text-xs font-bold text-gray-500 hover:text-naija-neon transition underline">
+          Retake Quiz 🔄
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- PAYMENT EMAIL COLLECTION MODAL -->
+  <div id="paymentModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="max-w-sm w-full p-6 rounded-2xl glass-card border border-naija-gold/50 space-y-4">
+      <div class="flex justify-between items-center border-b border-naija-border pb-3">
+        <h3 class="font-bold text-white text-sm flex items-center gap-2">
+          <span>✨</span> Unlock Premium Pack (₦500)
+        </h3>
+        <button onclick="app.closePaymentModal()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-xs text-gray-300">Enter your email address to receive your payment receipt & premium badge link:</p>
+        <div>
+          <label class="text-[10px] text-gray-400 uppercase font-bold">Email Address</label>
+          <input type="email" id="customerEmailInput" placeholder="yourname@gmail.com" class="w-full mt-1 px-3 py-2.5 rounded-xl bg-naija-card border border-naija-border text-white text-xs focus:outline-none focus:border-naija-gold">
+        </div>
+
+        <button onclick="app.initiatePaystackPayment()" class="w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-amber-500 hover:to-yellow-400 text-black font-bold text-xs uppercase tracking-wider">
+          PROCEED TO PAYSTACK (₦500)
+        </button>
+
+        <p class="text-[10px] text-gray-500 text-center">Secured by Paystack. 256-bit SSL encryption.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN MODAL -->
+  <div id="adminModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="max-w-sm w-full p-6 rounded-2xl glass-card border border-naija-border space-y-4">
+      <div class="flex justify-between items-center border-b border-naija-border pb-3">
+        <h3 class="font-bold text-white text-sm">📊 NaijaID Admin Dashboard</h3>
+        <button onclick="app.closeAdminModal()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+
+      <!-- Password Lock Screen -->
+      <div id="adminAuthView" class="space-y-3">
+        <p class="text-xs text-gray-400">Enter Admin Passcode:</p>
+        <input type="password" id="adminPasscode" placeholder="Enter passcode..." class="w-full px-3 py-2 rounded-xl bg-naija-card border border-naija-border text-white text-xs focus:outline-none focus:border-naija-neon">
+        <button onclick="app.authenticateAdmin()" class="w-full py-2.5 rounded-xl bg-naija-neon text-black font-bold text-xs uppercase">
+          Login
+        </button>
+      </div>
+
+      <!-- Analytics Dashboard View -->
+      <div id="adminDataView" class="hidden space-y-4">
+        <div class="grid grid-cols-2 gap-2 text-center">
+          <div class="p-2.5 rounded-xl bg-naija-card border border-naija-border">
+            <p class="text-[10px] text-gray-400 uppercase">Visits</p>
+            <p id="adminVisits" class="text-lg font-bold text-white">0</p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-naija-card border border-naija-border">
+            <p class="text-[10px] text-gray-400 uppercase">Completions</p>
+            <p id="adminCompletions" class="text-lg font-bold text-naija-neon">0</p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-naija-card border border-naija-border">
+            <p class="text-[10px] text-gray-400 uppercase">Shares</p>
+            <p id="adminShares" class="text-lg font-bold text-white">0</p>
+          </div>
+          <div class="p-2.5 rounded-xl bg-naija-card border border-naija-border">
+            <p class="text-[10px] text-gray-400 uppercase">Revenue</p>
+            <p id="adminRevenue" class="text-lg font-bold text-naija-gold">₦0</p>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <p class="text-[11px] font-bold text-gray-400 uppercase">Completion Rate</p>
+          <div class="w-full bg-naija-card rounded-full h-2 border border-naija-border overflow-hidden">
+            <div id="adminCompletionRateBar" class="bg-naija-neon h-full w-0"></div>
+          </div>
+        </div>
+
+        <button onclick="app.resetAnalytics()" class="w-full py-2 rounded-xl bg-red-900/40 border border-red-700/50 text-red-300 font-bold text-xs">
+          Reset Real Counter Data
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer Info -->
+  <footer class="w-full text-center py-4 text-[11px] text-gray-600 border-t border-naija-border/30">
+    <div class="max-w-md mx-auto px-4 flex justify-between items-center">
+      <span>NaijaID 🇳🇬 &copy; 2026</span>
+      <div class="flex items-center gap-3">
+        <span>No Registration • Pure Vibes</span>
+        <button onclick="app.openAdminModal()" class="text-gray-600 hover:text-gray-400 text-[10px] opacity-40 hover:opacity-100 transition" title="Admin Portal">
+          ⚙️
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Confetti Canvas Overlay -->
+  <canvas id="confettiCanvas" class="pointer-events-none fixed inset-0 z-50 w-full h-full"></canvas>
+
+  <script>
+    /* NAIJA ID ENGINE JAVASCRIPT */
+
+    const IDENTITIES = {
+      hustler: {
+        id: 'hustler',
+        title: 'THE HUSTLER 💼',
+        shortDesc: 'Give you ₦5,000 and you turn it into a masterplan.',
+        fullDesc: 'You don\'t wait for opportunities. You create them. While everyone else is complaining about a crisis, you are already calculating how to monetize the solution. Absolute legend.',
+        advice: '⚡ <strong>Strategic Advice:</strong> Your energy and initiative are unmatched, but avoid burn-out. Partner with an analytical Strategist to automate and scale your moves so you can rest while earning.',
+        emoji: '💼',
+        color: '#00e676',
+        stats: { 'Naija Energy': 96, 'Street Smarts': 94, 'Problem Solving': 98, 'Vibes': 82 }
+      },
+      strategist: {
+        id: 'strategist',
+        title: 'THE STRATEGIST 🧠',
+        shortDesc: 'You don\'t panic. You calculate.',
+        fullDesc: 'You always have Plan A, B, and C. NEPA takes light? You already calculated generator fuel hours. Traffic in Lagos? You checked 3 maps. Nobody catches you off guard.',
+        advice: '⚡ <strong>Strategic Advice:</strong> Overanalyzing can slow down execution. Trust your preparation and take action slightly faster—you already know more than 90% of people in the room.',
+        emoji: '🧠',
+        color: '#3b82f6',
+        stats: { 'Naija Energy': 88, 'Street Smarts': 92, 'Problem Solving': 96, 'Vibes': 78 }
+      },
+      survivor: {
+        id: 'survivor',
+        title: 'THE SURVIVOR 🔥',
+        shortDesc: 'Whatever Nigeria throws at you, you survive.',
+        fullDesc: 'No light, no fuel, heavy traffic? No wahala. You adapt faster than water. Nothing shakes you anymore because you\'ve seen it all.',
+        advice: '⚡ <strong>Strategic Advice:</strong> Survival is a superpower, but don\'t settle for just surviving. Shift from defensive positioning to building long-term wealth assets.',
+        emoji: '🔥',
+        color: '#f97316',
+        stats: { 'Naija Energy': 98, 'Street Smarts': 96, 'Problem Solving': 90, 'Vibes': 85 }
+      },
+      vibes: {
+        id: 'vibes',
+        title: 'THE VIBES MERCHANT 😎',
+        shortDesc: 'Life is too short to stress yourself.',
+        fullDesc: 'As long as good music, good food, and soft vibes exist, you are fine. You refuse to carry the country\'s problems on your shoulders. Maximum enjoyment!',
+        advice: '⚡ <strong>Strategic Advice:</strong> Your positivity brings people together! Leverage your social network to land big opportunities while keeping life enjoyable.',
+        emoji: '😎',
+        color: '#eab308',
+        stats: { 'Naija Energy': 85, 'Street Smarts': 80, 'Problem Solving': 75, 'Vibes': 99 }
+      },
+      softlife: {
+        id: 'softlife',
+        title: 'SOFT LIFE SPECIALIST 🥂',
+        shortDesc: 'Stress? In this economy? Not you.',
+        fullDesc: 'You strictly protect your peace and comfort. If it involves unnecessary stress or hard labor, count you out. You were born for AC and soft experiences.',
+        advice: '⚡ <strong>Strategic Advice:</strong> Maintaining a soft life requires high-income efficiency. Focus on high-value skills and automated income streams to keep funding comfort.',
+        emoji: '🥂',
+        color: '#ec4899',
+        stats: { 'Naija Energy': 80, 'Street Smarts': 82, 'Problem Solving': 78, 'Vibes': 95 }
+      },
+      family: {
+        id: 'family',
+        title: 'THE FAMILY PERSON ❤️',
+        shortDesc: 'Family and loved ones first, always.',
+        fullDesc: 'You are the backbone of your circle. Before making big moves, you check up on family. Reliable, caring, and deeply respectful of your roots.',
+        advice: '⚡ <strong>Strategic Advice:</strong> You give so much to others—make sure you set healthy financial and emotional boundaries so your own cup remains full.',
+        emoji: '❤️',
+        color: '#ef4444',
+        stats: { 'Naija Energy': 90, 'Street Smarts': 85, 'Problem Solving': 88, 'Vibes': 84 }
+      },
+      opportunist: {
+        id: 'opportunist',
+        title: 'THE OPPORTUNIST 👀',
+        shortDesc: 'Always alert. Never missing a wave.',
+        fullDesc: 'You spot trends before anyone else. Quick thinker, fast mover. If there is a window opened anywhere, you are slipping right through it successfully.',
+        advice: '⚡ <strong>Strategic Advice:</strong> You excel at riding short-term waves. Pick 1 or 2 core projects to double down on for long-term compound growth.',
+        emoji: '👀',
+        color: '#8b5cf6',
+        stats: { 'Naija Energy': 92, 'Street Smarts': 95, 'Problem Solving': 89, 'Vibes': 88 }
+      },
+      solver: {
+        id: 'solver',
+        title: 'THE PROBLEM SOLVER 🛠️',
+        shortDesc: 'No wahala. We will figure it out.',
+        fullDesc: 'When things break, you fix them. Practical, calm, and incredibly resourceful. Everyone in your group calls you when things go wrong.',
+        advice: '⚡ <strong>Strategic Advice:</strong> Monetize your troubleshooting skills! People pay top money for people who solve complex headaches effortlessly.',
+        emoji: '🛠️',
+        color: '#14b8a6',
+        stats: { 'Naija Energy': 91, 'Street Smarts': 90, 'Problem Solving': 99, 'Vibes': 80 }
+      }
+    };
+
+    const QUESTIONS = [
+      {
+        id: 1,
+        category: 'Naija Survival',
+        icon: '🔋',
+        text: "It's 7AM and NEPA takes light. What's your first move?",
+        options: [
+          { text: "Find my power bank 🔋", traits: { strategist: 3, survivor: 2 } },
+          { text: "Check if it's only my area 👀", traits: { opportunist: 3, strategist: 1 } },
+          { text: "Start the generator immediately 😂", traits: { softlife: 3, hustler: 1 } },
+          { text: '"God abeg..." 🙏', traits: { vibes: 3, survivor: 2 } }
+        ]
+      },
+      {
+        id: 2,
+        category: 'Time Management',
+        icon: '⏰',
+        text: 'Someone says "I\'m 5 minutes away." What do you actually expect?',
+        options: [
+          { text: "They're really 5 minutes away", traits: { family: 3, strategist: 1 } },
+          { text: "Maybe 20 minutes", traits: { strategist: 2, solver: 2 } },
+          { text: "At least one hour 😂", traits: { survivor: 3, hustler: 1 } },
+          { text: "They haven't even left home", traits: { vibes: 3, opportunist: 2 } }
+        ]
+      },
+      {
+        id: 3,
+        category: 'Money Mindset',
+        icon: '💸',
+        text: "₦100,000 suddenly enters your account. What's your first thought?",
+        options: [
+          { text: "Save it", traits: { strategist: 3, family: 2 } },
+          { text: "Invest it / Turn it to business", traits: { hustler: 4, solver: 1 } },
+          { text: '"Who sent this money?" 👀', traits: { opportunist: 3, survivor: 2 } },
+          { text: "Food and chilling first. We think later 😂", traits: { vibes: 3, softlife: 3 } }
+        ]
+      },
+      {
+        id: 4,
+        category: 'Social Life',
+        icon: '🎉',
+        text: "Your friend says there's a party tonight. What's the first thing you ask?",
+        options: [
+          { text: "Where is it?", traits: { strategist: 2, solver: 2 } },
+          { text: "Who is coming?", traits: { family: 3, opportunist: 1 } },
+          { text: "Is there food? 😂", traits: { softlife: 3, vibes: 2 } },
+          { text: "What should I wear?", traits: { vibes: 3, softlife: 2 } }
+        ]
+      },
+      {
+        id: 5,
+        category: 'Traffic Logic',
+        icon: '🚗',
+        text: "You're in Lagos traffic and Google Maps says 20 minutes. You believe it?",
+        options: [
+          { text: "Absolutely", traits: { family: 2, softlife: 1 } },
+          { text: "Maybe", traits: { strategist: 2, solver: 1 } },
+          { text: "Never 😂", traits: { survivor: 3, hustler: 2 } },
+          { text: "I already accepted my fate", traits: { vibes: 3, survivor: 2 } }
+        ]
+      },
+      {
+        id: 6,
+        category: 'Debt & Business',
+        icon: '💰',
+        text: 'Someone owes you money and says "I\'ll pay you soon."',
+        options: [
+          { text: "I politely remind them", traits: { strategist: 2, family: 2 } },
+          { text: "I give them another day", traits: { vibes: 2, softlife: 2 } },
+          { text: "I start sending reminders 😂", traits: { hustler: 3, solver: 2 } },
+          { text: '"Bro, I need my money right now."', traits: { survivor: 3, hustler: 2 } }
+        ]
+      },
+      {
+        id: 7,
+        category: 'Parental Instinct',
+        icon: '👀',
+        text: 'Your Nigerian mum says: "Come here, I want to talk to you."',
+        options: [
+          { text: "I immediately go", traits: { family: 4, strategist: 1 } },
+          { text: "I ask what happened", traits: { solver: 2, opportunist: 2 } },
+          { text: "I start remembering everything I did today 😂", traits: { survivor: 3, strategist: 2 } },
+          { text: "I pretend I didn't hear", traits: { vibes: 3, softlife: 2 } }
+        ]
+      },
+      {
+        id: 8,
+        category: 'Weekend Energy',
+        icon: '🛋️',
+        text: "You suddenly get a completely free Saturday. What are you doing?",
+        options: [
+          { text: "Sleeping all day", traits: { softlife: 3, vibes: 2 } },
+          { text: "Going out with friends", traits: { vibes: 3, family: 2 } },
+          { text: "Eating and watching movies", traits: { softlife: 2, vibes: 2 } },
+          { text: "Finding a way to make extra money 😂", traits: { hustler: 4, opportunist: 2 } }
+        ]
+      }
+    ];
+
+    class NaijaIDApp {
+      constructor() {
+        this.currentScreen = 'landing';
+        this.currentQuestionIdx = 0;
+        this.traitScores = {
+          hustler: 0,
+          strategist: 0,
+          survivor: 0,
+          vibes: 0,
+          softlife: 0,
+          family: 0,
+          opportunist: 0,
+          solver: 0
+        };
+        this.userResult = null;
+        this.isSoundOn = true;
+        this.audioCtx = null;
+
+        // User's Paystack Live Public Key
+        this.paystackPublicKey = 'pk_live_8a8e71262c9edfbc68b1a5fedf2cf1e59186c907';
+
+        // Persistent Premium Unlock check
+        this.isPremiumUnlocked = localStorage.getItem('naijaid_premium_unlocked') === 'true';
+
+        // Real Analytics state from Local Storage
+        this.analytics = this.loadAnalytics();
+      }
+
+      init() {
+        this.analytics.visits++;
+        this.saveAnalytics();
+
+        this.checkReferral();
+        this.setupCountdown();
+        this.updateSocialProofCounter();
+        this.renderCanvasPreview();
+
+        if (this.isPremiumUnlocked) {
+          this.applyPremiumStateUI();
+        }
+      }
+
+      showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        const bg = type === 'success' ? 'bg-emerald-600 border-emerald-400' : 
+                   type === 'warning' ? 'bg-amber-600 border-amber-400' : 'bg-naija-card border-naija-border';
+        
+        toast.className = `p-3 rounded-xl border text-xs text-white font-medium shadow-xl backdrop-blur-md transition-all duration-300 transform translate-y-[-10px] opacity-0 flex items-center gap-2 ${bg}`;
+        toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️'}</span> <span>${message}</span>`;
+        
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.remove('translate-y-[-10px]', 'opacity-0');
+        }, 10);
+
+        setTimeout(() => {
+          toast.classList.add('opacity-0', 'translate-y-[-10px]');
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      checkReferral() {
+        const hash = window.location.hash;
+        if (hash.includes('admin')) {
+          this.openAdminModal();
+        } else if (hash.includes('result=')) {
+          const params = new URLSearchParams(hash.replace('#', ''));
+          const resKey = params.get('result');
+          if (IDENTITIES[resKey]) {
+            const friendCard = document.getElementById('friendChallengeCard');
+            const friendText = document.getElementById('friendChallengeText');
+            if (friendCard && friendText) {
+              friendText.innerHTML = `Your friend discovered they are <span class="text-naija-gold font-bold">${IDENTITIES[resKey].title}</span>!`;
+              friendCard.classList.remove('hidden');
+            }
+          }
+        }
+      }
+
+      setupCountdown() {
+        const textElem = document.getElementById('countdownText');
+        const now = new Date();
+        const year = now.getFullYear();
+        let target = new Date(`October 1, ${year} 00:00:00`);
+        
+        if (now > target) {
+          textElem.innerText = "THE NAIJAID CHALLENGE IS LIVE 🇳🇬";
+        } else {
+          const diffDays = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+          textElem.innerText = `INDEPENDENCE DAY CHALLENGE (${diffDays} DAYS LEFT) 🇳🇬`;
+        }
+      }
+
+      updateSocialProofCounter() {
+        const total = Math.max(12, this.analytics.completions);
+        document.getElementById('quizStartsCounter').innerText = `${total.toLocaleString()} completed on this device/network`;
+      }
+
+      playTone(freq = 440, type = 'sine', duration = 0.15) {
+        if (!this.isSoundOn) return;
+        try {
+          if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.audioCtx.destination);
+          osc.start();
+          osc.stop(this.audioCtx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      toggleSound() {
+        this.isSoundOn = !this.isSoundOn;
+        document.getElementById('soundIconOn').classList.toggle('hidden', !this.isSoundOn);
+        document.getElementById('soundIconOff').classList.toggle('hidden', this.isSoundOn);
+        if (this.isSoundOn) this.playTone(600, 'triangle', 0.2);
+      }
+
+      showScreen(screenId) {
+        ['landing', 'quiz', 'calculating', 'result'].forEach(id => {
+          const el = document.getElementById(`screen-${id}`);
+          if (el) el.classList.add('hidden');
+        });
+        const target = document.getElementById(`screen-${screenId}`);
+        if (target) target.classList.remove('hidden');
+        this.currentScreen = screenId;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      startQuiz() {
+        this.playTone(520, 'sine', 0.15);
+        this.currentQuestionIdx = 0;
+        this.resetScores();
+        this.analytics.quizStarts++;
+        this.saveAnalytics();
+        
+        this.showScreen('quiz');
+        this.renderQuestion();
+      }
+
+      resetScores() {
+        Object.keys(this.traitScores).forEach(k => this.traitScores[k] = 0);
+      }
+
+      renderQuestion() {
+        const q = QUESTIONS[this.currentQuestionIdx];
+        const total = QUESTIONS.length;
+
+        document.getElementById('questionProgressText').innerText = `QUESTION ${q.id} OF ${total}`;
+        document.getElementById('questionCategory').innerText = q.category;
+        document.getElementById('progressBar').style.width = `${((q.id) / total) * 100}%`;
+
+        document.getElementById('questionIcon').innerText = q.icon;
+        document.getElementById('questionText').innerText = q.text;
+
+        const container = document.getElementById('answersContainer');
+        container.innerHTML = '';
+
+        q.options.forEach((opt) => {
+          const btn = document.createElement('button');
+          btn.className = 'w-full p-4 rounded-xl glass-card border border-naija-border hover:border-naija-neon text-left text-sm font-semibold text-gray-200 hover:text-white flex items-center justify-between transition-all duration-200 active:scale-[0.98] group';
+          btn.onclick = () => this.selectAnswer(opt.traits);
+          btn.innerHTML = `
+            <span>${opt.text}</span>
+            <span class="text-naija-neon opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+          `;
+          container.appendChild(btn);
+        });
+      }
+
+      selectAnswer(traits) {
+        this.playTone(400 + (this.currentQuestionIdx * 40), 'sine', 0.1);
+
+        Object.keys(traits).forEach(t => {
+          if (this.traitScores[t] !== undefined) {
+            this.traitScores[t] += traits[t];
+          }
+        });
+
+        this.currentQuestionIdx++;
+
+        if (this.currentQuestionIdx < QUESTIONS.length) {
+          this.renderQuestion();
+        } else {
+          this.calculateResult();
+        }
+      }
+
+      calculateResult() {
+        this.showScreen('calculating');
+        
+        const statusTexts = [
+          'Analyzing Street Smarts...',
+          'Measuring Vibes Quotient...',
+          'Evaluating NEPA Survival Tactics...',
+          'Generating Official Certificate...'
+        ];
+
+        let idx = 0;
+        const interval = setInterval(() => {
+          idx++;
+          if (idx < statusTexts.length) {
+            document.getElementById('calcStatusText').innerText = statusTexts[idx];
+            this.playTone(300 + (idx * 100), 'triangle', 0.1);
+          } else {
+            clearInterval(interval);
+            this.finalizeResult();
+          }
+        }, 450);
+      }
+
+      finalizeResult() {
+        let topTrait = 'hustler';
+        let maxScore = -1;
+
+        Object.keys(this.traitScores).forEach(t => {
+          if (this.traitScores[t] > maxScore) {
+            maxScore = this.traitScores[t];
+            topTrait = t;
+          }
+        });
+
+        this.userResult = IDENTITIES[topTrait] || IDENTITIES['hustler'];
+        this.analytics.completions++;
+        this.saveAnalytics();
+        this.updateSocialProofCounter();
+
+        // Update UI Elements
+        document.getElementById('resultTitle').innerText = this.userResult.title;
+        document.getElementById('resultDescription').innerText = `"${this.userResult.fullDesc}"`;
+        document.getElementById('deepBreakdownText').innerHTML = `<p>${this.userResult.fullDesc}</p><p class="mt-2 font-medium">${this.userResult.advice}</p>`;
+
+        // Render Stats
+        const statsContainer = document.getElementById('resultStats');
+        statsContainer.innerHTML = '';
+        Object.entries(this.userResult.stats).forEach(([key, val]) => {
+          const row = document.createElement('div');
+          row.className = 'space-y-1';
+          row.innerHTML = `
+            <div class="flex justify-between text-[11px] font-semibold text-gray-300">
+              <span>${key}</span>
+              <span class="text-naija-neon font-bold">${val}%</span>
+            </div>
+            <div class="w-full h-1.5 bg-naija-card rounded-full overflow-hidden border border-naija-border">
+              <div class="h-full bg-naija-neon rounded-full" style="width: ${val}%"></div>
+            </div>
+          `;
+          statsContainer.appendChild(row);
+        });
+
+        this.showScreen('result');
+        this.renderCanvasCard(!this.isPremiumUnlocked);
+        this.triggerConfetti();
+        this.playTone(800, 'sine', 0.4);
+      }
+
+      renderCanvasCard(watermark = true, isUltraHD = false) {
+        const canvas = document.getElementById('resultCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        const width = isUltraHD ? 1080 : 720;
+        const height = isUltraHD ? 1920 : 1280;
+        canvas.width = width;
+        canvas.height = height;
+
+        const scale = width / 720;
+
+        // Background Gradient
+        const grad = ctx.createLinearGradient(0, 0, 0, height);
+        grad.addColorStop(0, '#0b0f0d');
+        grad.addColorStop(0.5, '#121a15');
+        grad.addColorStop(1, '#051109');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+
+        // Frame Border
+        ctx.strokeStyle = this.isPremiumUnlocked ? '#eab308' : '#00e676';
+        ctx.lineWidth = 8 * scale;
+        ctx.strokeRect(30 * scale, 30 * scale, (720 - 60) * scale, (1280 - 60) * scale);
+
+        // Title Header
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `900 ${Math.round(38 * scale)}px Inter, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('NAIJA ID 🇳🇬', (360 * scale), (110 * scale));
+
+        ctx.fillStyle = this.isPremiumUnlocked ? '#eab308' : '#00e676';
+        ctx.font = `700 ${Math.round(22 * scale)}px Inter, sans-serif`;
+        ctx.fillText(this.isPremiumUnlocked ? '✨ OFFICIAL PREMIUM CERTIFICATE ✨' : 'OFFICIAL PERSONALITY CERTIFICATE', (360 * scale), (150 * scale));
+
+        // Identity Emoji Circle Badge
+        ctx.fillStyle = '#121a15';
+        ctx.beginPath();
+        ctx.arc((360 * scale), (290 * scale), (80 * scale), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = this.isPremiumUnlocked ? '#eab308' : '#00e676';
+        ctx.lineWidth = 4 * scale;
+        ctx.stroke();
+
+        ctx.font = `${Math.round(72 * scale)}px sans-serif`;
+        ctx.fillText(this.userResult.emoji, (360 * scale), (315 * scale));
+
+        // Result Title
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `900 ${Math.round(42 * scale)}px Inter, sans-serif`;
+        ctx.fillText(this.userResult.title, (360 * scale), (430 * scale));
+
+        // Tagline
+        ctx.fillStyle = '#eab308';
+        ctx.font = `600 ${Math.round(24 * scale)}px Inter, sans-serif`;
+        this.wrapText(ctx, `"${this.userResult.shortDesc}"`, (360 * scale), (480 * scale), (580 * scale), (32 * scale));
+
+        // Stats Container
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 2 * scale;
+        ctx.roundRect((80 * scale), (580 * scale), (560 * scale), (420 * scale), (20 * scale));
+        ctx.fill();
+        ctx.stroke();
+
+        let yPos = 640 * scale;
+        Object.entries(this.userResult.stats).forEach(([statName, val]) => {
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#d1d5db';
+          ctx.font = `700 ${Math.round(22 * scale)}px Inter, sans-serif`;
+          ctx.fillText(statName, (110 * scale), yPos);
+
+          ctx.textAlign = 'right';
+          ctx.fillStyle = '#00e676';
+          ctx.fillText(`${val}%`, (610 * scale), yPos);
+
+          ctx.fillStyle = '#1a261f';
+          ctx.fillRect((110 * scale), yPos + (12 * scale), (500 * scale), (16 * scale));
+
+          ctx.fillStyle = '#00e676';
+          ctx.fillRect((110 * scale), yPos + (12 * scale), ((500 * val) / 100) * scale, (16 * scale));
+
+          yPos += (85 * scale);
+        });
+
+        // Watermark Footer logic
+        ctx.textAlign = 'center';
+        if (watermark && !this.isPremiumUnlocked) {
+          ctx.fillStyle = '#9ca3af';
+          ctx.font = `600 ${Math.round(22 * scale)}px Inter, sans-serif`;
+          ctx.fillText('Discover Yours at: naijaid.app', (360 * scale), (1140 * scale));
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+          ctx.font = `500 ${Math.round(18 * scale)}px Inter, sans-serif`;
+          ctx.fillText('FREE VERSION • NAIJAID 2026', (360 * scale), (1180 * scale));
+        } else {
+          ctx.fillStyle = '#eab308';
+          ctx.font = `800 ${Math.round(24 * scale)}px Inter, sans-serif`;
+          ctx.fillText('✨ VERIFIED PREMIUM ID • ULTRA HD ✨', (360 * scale), (1150 * scale));
+        }
+      }
+
+      wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + words[n] + ' ';
+          const metrics = ctx.measureText(testLine);
+          if (metrics.width > maxWidth && n > 0) {
+            ctx.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, x, y);
+      }
+
+      shareToWhatsApp() {
+        this.analytics.shares++;
+        this.saveAnalytics();
+
+        const res = this.userResult || IDENTITIES['hustler'];
+        const link = `${window.location.origin}${window.location.pathname}#result=${res.id}`;
+        const text = `😂 I just discovered my official Naija Identity!\n\nApparently I'm *${res.title}*!\n"${res.shortDesc}"\n\nWhat's yours? Take the 60-second quiz here 👇\n${link}`;
+        
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+      }
+
+      downloadResultCard(isHD = false) {
+        this.renderCanvasCard(!this.isPremiumUnlocked, isHD);
+        const canvas = document.getElementById('resultCanvas');
+        const link = document.createElement('a');
+        link.download = `NaijaID_${this.userResult.id}${isHD ? '_UltraHD' : ''}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        this.showToast('Card saved to your device! 📥', 'success');
+      }
+
+      copyResultLink() {
+        const res = this.userResult || IDENTITIES['hustler'];
+        const link = `${window.location.origin}${window.location.pathname}#result=${res.id}`;
+        
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(link);
+        } else {
+          const input = document.createElement('input');
+          input.value = link;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+        }
+
+        this.showToast('Challenge link copied to clipboard! Share on WhatsApp! 🔥', 'success');
+      }
+
+      copyPremiumCaption() {
+        const res = this.userResult || IDENTITIES['hustler'];
+        const link = `${window.location.origin}${window.location.pathname}#result=${res.id}`;
+        const caption = `Official NaijaID Result: I am ${res.title} ${res.emoji}\n\n"${res.fullDesc}"\n\nDiscover your Naija Identity here: ${link}`;
+        
+        const input = document.createElement('textarea');
+        input.value = caption;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+
+        this.showToast('Custom Instagram/TikTok caption copied! 📋', 'success');
+      }
+
+      openPaymentModal() {
+        document.getElementById('paymentModal').classList.remove('hidden');
+      }
+
+      closePaymentModal() {
+        document.getElementById('paymentModal').classList.add('hidden');
+      }
+
+      /* PAYSTACK LIVE PAYMENT INTEGRATION */
+      initiatePaystackPayment() {
+        const emailInput = document.getElementById('customerEmailInput').value.trim();
+        if (!emailInput || !emailInput.includes('@gmail.com')) {
+          this.showToast('Please enter a valid email address to receive your payment receipt.', 'warning');
+          return;
+        }
+
+        this.closePaymentModal();
+        this.analytics.paystackClicks = (this.analytics.paystackClicks || 0) + 1;
+        this.saveAnalytics();
+
+        // Ensure Paystack SDK is loaded
+        if (typeof PaystackPop === 'undefined') {
+          this.showToast('Paystack SDK failed to load. Please check your internet connection.', 'warning');
+          return;
+        }
+
+        try {
+          const handler = PaystackPop.setup({
+            key: 'pk_live_8a8e71262c9edfbc68b1a5fedf2cf1e59186c907',
+            email: emailInput,
+            amount: 50000, // ₦500 in kobo (500 * 100)
+            currency: 'NGN',
+            ref: 'NID_' + Math.floor((Math.random() * 1000000000) + 1),
+            metadata: {
+              custom_fields: [
+                {
+                  display_name: "Product Name",
+                  variable_name: "product_name",
+                  value: "NaijaID Premium Unlock"
+                }
+              ]
+            },
+            onClose: () => {
+              this.showToast('Payment window closed.', 'warning');
+            },
+            callback: (response) => {
+              if (response && (response.status === 'success' || response.message === 'Approved')) {
+                this.handlePaymentSuccess(response.reference);
+              } else {
+                this.showToast('Payment could not be verified. Please try again.', 'warning');
+              }
+            }
+          });
+
+          handler.openIframe();
+        } catch (e) {
+          console.error('Paystack error:', e);
+          this.showToast('Could not open Paystack payment modal.', 'warning');
+        }
+      }
+
+      handlePaymentSuccess(ref) {
+        // PERSIST PREMIUM UNLOCK TO LOCAL STORAGE
+        this.isPremiumUnlocked = true;
+        localStorage.setItem('naijaid_premium_unlocked', 'true');
+
+        this.analytics.revenue += 500;
+        this.saveAnalytics();
+
+        this.applyPremiumStateUI();
+        this.renderCanvasCard(false, true);
+        this.triggerConfetti();
+        this.playTone(900, 'sine', 0.5);
+
+        this.showToast('🎉 Payment Successful! Premium NaijaID Unlocked!', 'success');
+      }
+
+      applyPremiumStateUI() {
+        document.getElementById('premiumUpsellBanner')?.classList.add('hidden');
+        document.getElementById('premiumUnlockedSection')?.classList.remove('hidden');
+        document.getElementById('deepBreakdownContainer')?.classList.remove('hidden');
+        document.getElementById('premiumAnimatedBadge')?.classList.remove('hidden');
+      }
+
+      triggerConfetti() {
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const colors = ['#00e676', '#eab308', '#ffffff', '#3b82f6'];
+
+        for (let i = 0; i < 80; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: Math.random() * 8 + 4,
+            speedY: Math.random() * 3 + 2,
+            speedX: Math.random() * 2 - 1
+          });
+        }
+
+        let animationFrame;
+        const render = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          let active = false;
+
+          particles.forEach(p => {
+            p.y += p.speedY;
+            p.x += p.speedX;
+            if (p.y < canvas.height) active = true;
+
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+          });
+
+          if (active) {
+            animationFrame = requestAnimationFrame(render);
+          } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            cancelAnimationFrame(animationFrame);
+          }
+        };
+
+        render();
+      }
+
+      openAdminModal() {
+        document.getElementById('adminModal').classList.remove('hidden');
+      }
+
+      closeAdminModal() {
+        document.getElementById('adminModal').classList.add('hidden');
+      }
+
+      authenticateAdmin() {
+        const pass = document.getElementById('adminPasscode').value;
+        if (pass === 'naija2026') {
+          document.getElementById('adminAuthView').classList.add('hidden');
+          document.getElementById('adminDataView').classList.remove('hidden');
+          this.renderAdminData();
+        } else {
+          this.showToast('Incorrect Admin Passcode', 'warning');
+        }
+      }
+
+      renderAdminData() {
+        document.getElementById('adminVisits').innerText = this.analytics.visits;
+        document.getElementById('adminCompletions').innerText = this.analytics.completions;
+        document.getElementById('adminShares').innerText = this.analytics.shares;
+        document.getElementById('adminRevenue').innerText = `₦${this.analytics.revenue}`;
+
+        const rate = this.analytics.visits > 0 ? Math.round((this.analytics.completions / this.analytics.visits) * 100) : 0;
+        document.getElementById('adminCompletionRateBar').style.width = `${rate}%`;
+      }
+
+      loadAnalytics() {
+        const stored = localStorage.getItem('naijaid_analytics');
+        if (stored) {
+          try { return JSON.parse(stored); } catch (e) {}
+        }
+        return { visits: 1, quizStarts: 0, completions: 0, shares: 0, paystackClicks: 0, revenue: 0 };
+      }
+
+      saveAnalytics() {
+        localStorage.setItem('naijaid_analytics', JSON.stringify(this.analytics));
+      }
+
+      resetAnalytics() {
+        this.analytics = { visits: 1, quizStarts: 0, completions: 0, shares: 0, paystackClicks: 0, revenue: 0 };
+        this.saveAnalytics();
+        this.renderAdminData();
+        this.updateSocialProofCounter();
+        this.showToast('Analytics reset successfully.', 'info');
+      }
+
+      renderCanvasPreview() {
+        this.userResult = IDENTITIES['hustler'];
+        this.renderCanvasCard(!this.isPremiumUnlocked);
+      }
+    }
+
+    let app;
+    window.onload = function() {
+      app = new NaijaIDApp();
+      app.init();
+    };
+  </script>
+</body>
+</html>
